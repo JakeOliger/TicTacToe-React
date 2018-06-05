@@ -109,6 +109,8 @@ class Game extends React.Component {
 
         let replay =
             <button className="replay" onClick={() => {
+                if (this.state.isReplaying) return;
+                
                 this.setState({isReplaying: true});
                 var i = 0;
                 var intervalId = setInterval(() => {
