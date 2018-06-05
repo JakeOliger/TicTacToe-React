@@ -53,7 +53,6 @@ class Game extends React.Component {
             xIsNext: true,
             stepNumber: 0,
             showMovesAscending: true,
-            isReplaying: false,
         }
     }
 
@@ -65,8 +64,6 @@ class Game extends React.Component {
     }
 
     handleClick(i) {
-        if (this.state.isReplaying) return;
-
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
