@@ -53,6 +53,7 @@ class Game extends React.Component {
             xIsNext: true,
             stepNumber: 0,
             showMovesAscending: true,
+            isReplaying: false,
         }
     }
 
@@ -64,6 +65,8 @@ class Game extends React.Component {
     }
 
     handleClick(i) {
+        if (this.state.isReplaying) return;
+
         const history = this.state.history.slice(0, this.state.stepNumber + 1);
         const current = history[history.length - 1];
         const squares = current.squares.slice();
@@ -95,20 +98,6 @@ class Game extends React.Component {
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
 
-        const moves = (this.state.showMovesAscending ? history : history.reverse()).map((step, move) => {
-            if (!this.state.showMovesAscending) {
-                move = history.length - 1 - move;
-            }
-            const desc = move !== 0 ?
-                `Go to move #${move} (${step.lastMove.col}, ${step.lastMove.row})` :
-                'Go to game start';
-            return (
-                <li key={move}>
-                    <button onClick={() => this.jumpTo(move)}>{desc}</button>
-                </li>
-            );
-        });
-
         let status;
         if (winner) {
             status = 'Winner: ' + winner.label;
@@ -118,10 +107,40 @@ class Game extends React.Component {
             status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
         }
 
+        let replay =
+            <button className="replay" onClick={() => {
+                this.setState({isReplaying: true});
+                var i = 0;
+                var intervalId = setInterval(() => {
+                    this.jumpTo(i);
+                    i++;
+                    if (i >= history.length) {
+                        this.setState({isReplaying: false});
+                        clearInterval(intervalId);
+                    }
+                }, 500);
+            }}>
+                {this.state.isReplaying ? "Replaying..." : "Replay"}
+            </button>;
+
         let toggle =
             <button className="sort" onClick={() => this.setState({showMovesAscending: !this.state.showMovesAscending})}>
                 Show moves in {this.state.showMovesAscending ? "descending" : "ascending"} order
-            </button>
+            </button>;
+
+        const moves = (this.state.showMovesAscending ? history : history.reverse()).map((step, move) => {
+            if (!this.state.showMovesAscending) {
+                move = history.length - 1 - move;
+            }
+            const desc = move !== 0 ?
+                `Go to move #${move} (${step.lastMove.col}, ${step.lastMove.row})` :
+                'Go to game start';
+            return (
+                <li key={move}>
+                    <button className={(move === this.state.stepNumber ? "highlight" : "")} onClick={() => this.jumpTo(move)}>{desc}</button>
+                </li>
+            );
+        });
 
         return (
             <div className="game">
@@ -136,6 +155,7 @@ class Game extends React.Component {
                 </div>
                 <div className="game-info">
                     <div className="status">{status}</div>
+                    <div>{replay}</div>
                     <div>{toggle}</div>
                     <ol>{moves}</ol>
                 </div>
