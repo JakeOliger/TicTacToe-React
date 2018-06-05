@@ -110,7 +110,7 @@ class Game extends React.Component {
         let replay =
             <button className="replay" onClick={() => {
                 if (this.state.isReplaying) return;
-                
+
                 this.setState({isReplaying: true});
                 var i = 0;
                 var intervalId = setInterval(() => {
@@ -139,7 +139,12 @@ class Game extends React.Component {
                 'Go to game start';
             return (
                 <li key={move}>
-                    <button className={(move === this.state.stepNumber ? "highlight" : "")} onClick={() => this.jumpTo(move)}>{desc}</button>
+                    <button className={(move === this.state.stepNumber ? "highlight" : "")} onClick={() => {
+                        if (this.state.isReplaying) return;
+                        this.jumpTo(move);
+                    }}>
+                        {desc}
+                    </button>
                 </li>
             );
         });

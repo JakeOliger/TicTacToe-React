@@ -22,6 +22,10 @@ ol, ul {
   font-weight: bold;
 }
 
+td.highlight {
+  background-color: #ffffee;
+}
+
 .kbd-navigation .square:focus {
   background: #ddd;
 }
